@@ -1,14 +1,8 @@
 class ForecastFacade
 
   def self.find_forecast(location)
-    location_conn = Faraday.new("http://www.mapquestapi.com/geocoding/v1/address")
-    location = location_conn.get('/geocoding/v1/address') do |f|
-      f.params[:location] = location
-      f.params[:key] = ENV['MAPQUEST_API_KEY']
-    end
-    parsed = JSON.parse(location.body, symbolize_names: true)
-    lat_lng = parsed[:results].first[:locations].first[:latLng]
-
+    lat_lng = LocationService.find_coords(location)
+    
     forecast_conn = Faraday.new("https://api.openweathermap.org") do |f|
     end
     
