@@ -1,8 +1,12 @@
 class Api::V1::UsersController < ApplicationController
 
   def create
-    user = User.create(user_params)
-    render json: UserSerializer.new(user), status: 201
+    user = User.new(user_params)
+    if user.save
+      render json: UserSerializer.new(user), status: 201
+    else
+      render json: { status: 400, error: 'Invalid inputs: User has not been created'}, status: 400
+    end
   end
 
   private 
