@@ -68,6 +68,18 @@ RSpec.configure do |config|
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
 
+  require 'webmock/rspec'
+
+VCR.configure do |config|
+  config.cassette_library_dir = 'spec/fixtures/vcr_cassettes'
+  config.hook_into :webmock
+  config.filter_sensitive_data('MAPQUEST_API_KEY') { ENV['MAPQUEST_API_KEY'] }
+  config.filter_sensitive_data('OPENWEATHER_API_KEY') { ENV['OPENWEATHER_API_KEY'] }
+  config.filter_sensitive_data('UNSPLASH_API_KEY') { ENV['UNSPLASH_API_KEY'] }
+  config.default_cassette_options = { re_record_interval: 7.days }
+  config.configure_rspec_metadata!
+end
+
   Shoulda::Matchers.configure do |config|
     config.integrate do |with|
        with.test_framework :rspec

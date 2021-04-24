@@ -1,6 +1,11 @@
 class Forecast
   include Formatter
 
+  attr_reader :timezone_offset,
+              :current_weather,
+              :daily_weather,
+              :hourly_weather
+
   def initialize(data)
     @timezone_offset = data[:timezone_offset]
     @current_weather = data[:current]

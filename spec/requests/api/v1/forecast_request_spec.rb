@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'weather request' do
+RSpec.describe 'forecast request' do
   describe 'happy path' do
     it 'returns the forcast for a given city' do
       VCR.use_cassette('mapquest_location_denver') do
@@ -11,7 +11,7 @@ RSpec.describe 'weather request' do
         expect(response.status).to eq(200)
   
         result = JSON.parse(response.body, symbolize_names: true)
-  # require 'pry'; binding.pry
+        
         expect(result).to be_a(Hash)
         expect(result).to have_key(:data)
         expect(result[:data]).to be_a(Hash)
