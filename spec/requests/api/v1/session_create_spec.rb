@@ -10,7 +10,7 @@ RSpec.describe 'session creation' do
         password: user.password
       }
 
-      post '/api/v1/sessions', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json'},
+      post '/api/v1/sessions', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json' },
       params: JSON.generate(login_credentials)
 
       expect(response.status).to eq(200)
@@ -29,6 +29,47 @@ RSpec.describe 'session creation' do
       expect(session[:data][:attributes][:email]).to be_a(String)
       expect(session[:data][:attributes]).to have_key(:api_key)
       expect(session[:data][:attributes][:api_key]).to be_a(String)
+    end
+  end
+
+  describe 'sad path' do 
+    before(:each) do
+      @user = create(:user, email: 'test@example.com', password: 'password', password_confirmation: 'password')
+    end
+    it 'returns a 400 error if password does not pass authentication' do  
+      login_credentials = {
+        email: 'test@example.com',
+        password: 'word'
+      }
+
+      post '/api/v1/sessions', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json'},
+      params: JSON.generate(login_credentials)
+
+      expect(response.status).to eq(400)
+    end
+
+    it 'returns a 400 error if email is empty' do  
+      login_credentials = {
+        email: '',
+        password: 'password'
+      }
+
+      post '/api/v1/sessions', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json'},
+      params: JSON.generate(login_credentials)
+
+      expect(response.status).to eq(400)
+    end
+
+    it 'returns a 400 error if password is empty' do  
+      login_credentials = {
+        email: 'test@example.com',
+        password: ''
+      }
+
+      post '/api/v1/sessions', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json'},
+      params: JSON.generate(login_credentials)
+
+      expect(response.status).to eq(400)
     end
   end
 end

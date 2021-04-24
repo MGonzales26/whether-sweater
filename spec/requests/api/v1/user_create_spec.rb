@@ -13,7 +13,7 @@ RSpec.describe 'user post endpoints' do
 
       expect(User.last.email).to_not eq('whatever@example.com')
 
-      post '/api/v1/users', headers: { 'Content-Type' => 'application/'},
+      post '/api/v1/users', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json'},
       params: JSON.generate(user_info)
 
       expect(response.status).to eq(201)
@@ -39,58 +39,58 @@ RSpec.describe 'user post endpoints' do
 
   describe 'sad path' do
     it 'returns a 400 error if email exists' do
-        create(:user, email: 'whatever@example.com',  password: '1234', password_confirmation: '1234')
-  
-        user_info = {
-          email: 'whatever@example.com',
-          password: 'password',
-          password_confirmation: 'password'
-        }
-  
-  
-        post '/api/v1/users', headers: { 'Content-Type' => 'application/'},
-        params: JSON.generate(user_info)
-  
-        expect(response.status).to eq(400)
+      create(:user, email: 'whatever@example.com',  password: '1234', password_confirmation: '1234')
+
+      user_info = {
+        email: 'whatever@example.com',
+        password: 'password',
+        password_confirmation: 'password'
+      }
+
+
+      post '/api/v1/users', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json'},
+      params: JSON.generate(user_info)
+
+      expect(response.status).to eq(400)
     end
 
     it 'returns a 400 error if password confirmation does not match' do  
-        user_info = {
-          email: 'whatever@example.com',
-          password: 'password',
-          password_confirmation: 'word'
-        }
-  
-        post '/api/v1/users', headers: { 'Content-Type' => 'application/'},
-        params: JSON.generate(user_info)
-  
-        expect(response.status).to eq(400)
+      user_info = {
+        email: 'whatever@example.com',
+        password: 'password',
+        password_confirmation: 'word'
+      }
+
+      post '/api/v1/users', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json'},
+      params: JSON.generate(user_info)
+
+      expect(response.status).to eq(400)
     end
 
     it 'returns a 400 error if email is empty' do  
-        user_info = {
-          email: '',
-          password: 'password',
-          password_confirmation: 'password'
-        }
-  
-        post '/api/v1/users', headers: { 'Content-Type' => 'application/'},
-        params: JSON.generate(user_info)
-  
-        expect(response.status).to eq(400)
+      user_info = {
+        email: '',
+        password: 'password',
+        password_confirmation: 'password'
+      }
+
+      post '/api/v1/users', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json'},
+      params: JSON.generate(user_info)
+
+      expect(response.status).to eq(400)
     end
 
     it 'returns a 400 error if password is empty' do  
-        user_info = {
-          email: 'whatever@example.com',
-          password: '',
-          password_confirmation: 'password'
-        }
-  
-        post '/api/v1/users', headers: { 'Content-Type' => 'application/'},
-        params: JSON.generate(user_info)
-  
-        expect(response.status).to eq(400)
+      user_info = {
+        email: 'whatever@example.com',
+        password: '',
+        password_confirmation: 'password'
+      }
+
+      post '/api/v1/users', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json'},
+      params: JSON.generate(user_info)
+
+      expect(response.status).to eq(400)
     end
   end
 end
