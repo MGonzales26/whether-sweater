@@ -3,22 +3,22 @@ require 'rails_helper'
 RSpec.describe 'weather request' do
   describe 'happy path' do
     it 'returns the forcast for a given city' do
-      # VCR.use_cassette('mapquest_location_denver') do
+      VCR.use_cassette('mapquest_location_denver') do
 
         get "/api/v1/forecast?location=denver,co", 
         headers: {'CONTENT_TYPE' => 'application/json', 'ACCEPT' => 'application/json'}
   
         expect(response.status).to eq(200)
   
-        result = JSON.parse(response.body symbolize_names: true)
-  
+        result = JSON.parse(response.body, symbolize_names: true)
+  # require 'pry'; binding.pry
         expect(result).to be_a(Hash)
         expect(result).to have_key(:data)
         expect(result[:data]).to be_a(Hash)
         expect(result[:data]).to have_key(:id)
-        expect(result[:data][:id]).to be(null)
+        expect(result[:data][:id]).to be(nil)
         expect(result[:data]).to have_key(:type)
-        expect(result[:data][:type]).to have_content("forecast")
+        expect(result[:data][:type]).to eq("forecast")
         expect(result[:data]).to have_key(:attributes)
         expect(result[:data][:attributes]).to be_a(Hash)
   
@@ -31,17 +31,18 @@ RSpec.describe 'weather request' do
         expect(result[:data][:attributes][:current_weather]).to have_key(:sunset)
         expect(result[:data][:attributes][:current_weather][:sunset]).to be_a(String)
         expect(result[:data][:attributes][:current_weather]).to have_key(:temperature)
+        expect(result[:data][:attributes][:current_weather][:temperature]).to be_a(Float)
         # Temperature in Fahrenheit
         expect(result[:data][:attributes][:current_weather][:temperature]).to be_a(Float)
         expect(result[:data][:attributes][:current_weather]).to have_key(:feels_like)
         # Temperature in Fahrenheit
         expect(result[:data][:attributes][:current_weather][:feels_like]).to be_a(Float)
         expect(result[:data][:attributes][:current_weather]).to have_key(:humidity)
-        expect(result[:data][:attributes][:current_weather][:humidity]).to be_a(Float)
+        expect(result[:data][:attributes][:current_weather][:humidity]).to be_a(Integer)
         expect(result[:data][:attributes][:current_weather]).to have_key(:uvi)
         expect(result[:data][:attributes][:current_weather][:uvi]).to be_a(Float)
         expect(result[:data][:attributes][:current_weather]).to have_key(:visibility)
-        expect(result[:data][:attributes][:current_weather][:visibility]).to be_a(Float)
+        expect(result[:data][:attributes][:current_weather][:visibility]).to be_a(Integer)
         expect(result[:data][:attributes][:current_weather]).to have_key(:conditions)
         expect(result[:data][:attributes][:current_weather][:conditions]).to be_a(String)
         expect(result[:data][:attributes][:current_weather]).to have_key(:icon)
@@ -78,7 +79,7 @@ RSpec.describe 'weather request' do
         expect(result[:data][:attributes][:daily_weather].first[:conditions]).to be_a(String)
         expect(result[:data][:attributes][:daily_weather].first).to have_key(:icon)
         expect(result[:data][:attributes][:daily_weather].first[:icon]).to be_a(String)
-      # end
+      end
     end
   end
 end

@@ -18,7 +18,6 @@ RSpec.describe 'background request' do
         expect(result[:data]).to have_key(:type)
         expect(result[:data][:type]).to eq('image')
         expect(result[:data]).to have_key(:id)
-        # require 'pry'; binding.pry
         expect(result[:data][:id]).to eq(nil)
         expect(result[:data]).to have_key(:attributes)
         expect(result[:data][:attributes]).to be_a(Hash)
