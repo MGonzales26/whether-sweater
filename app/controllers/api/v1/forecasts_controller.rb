@@ -9,22 +9,23 @@ class Api::V1::ForecastsController < ApplicationController
     parsed = JSON.parse(location.body, symbolize_names: true)
     lat_lng = parsed[:results].first[:locations].first[:latLng]
 
-    # forecast_conn = Faraday.new("https://api.openweathermap.org") do |f|
-    # end
+    forecast_conn = Faraday.new("https://api.openweathermap.org") do |f|
+    end
     
-    # forecast = forecast_conn.get("/data/2.5/onecall") do |f|
-    # f.params[:lat] = lat_lng[:lat]
-    # f.params[:lng] = lat_lng[:lng]
-    # end
-    forecast = Faraday.get("https://api.openweathermap.org/data/2.5/onecall") do |f|
+    forecast = forecast_conn.get("/data/2.5/onecall") do |f|
       f.params[:appid] = ENV['OPENWEATHER_API_KEY']
       f.params[:lat] = lat_lng[:lat]
       f.params[:lon] = lat_lng[:lng]
     end
-    require 'pry'; binding.pry
+    # forecast = Faraday.get("https://api.openweathermap.org/data/2.5/onecall") do |f|
+    #   f.params[:lat] = lat_lng[:lat]
+    #   f.params[:lon] = lat_lng[:lng]
+    # end
+    # require 'pry'; binding.pry
 
-    parsed_forcast = JSON.parse(forecast.body, symbolize_names: true)
+    parsed_forecast = JSON.parse(forecast.body, symbolize_names: true)
 
-    render json: WeatherSerializer.new(parsed_forcast)
+    forecast = Forecast.new(parsed_forecast)
+    render json: ForecastSerializer.new(forecast)
   end
 end

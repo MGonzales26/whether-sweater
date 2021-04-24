@@ -1,7 +1,6 @@
 class Api::V1::BackgroundsController < ApplicationController
 
   def show
-    # require 'pry'; binding.pry
     conn = Faraday.new('https://api.unsplash.com')
     result = conn.get('/search/photos') do |f|
       f.params['client_id'] = ENV['UNSPLASH_API_KEY']
