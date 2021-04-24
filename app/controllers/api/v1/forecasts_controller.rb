@@ -14,7 +14,7 @@ class Api::V1::ForecastsController < ApplicationController
     
     forecast = forecast_conn.get("/data/2.5/onecall") do |f|
       f.params[:appid] = ENV['OPENWEATHER_API_KEY']
-      f.params[:lat] = lat_lng[:lat]
+      f.params[:lat] = lat_lng[:lat] 
       f.params[:lon] = lat_lng[:lng]
     end
     # forecast = Faraday.get("https://api.openweathermap.org/data/2.5/onecall") do |f|
