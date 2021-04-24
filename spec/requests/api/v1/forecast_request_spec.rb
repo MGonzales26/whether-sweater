@@ -82,4 +82,33 @@ RSpec.describe 'forecast request' do
       end
     end
   end
+
+  describe 'sad path' do
+    it 'returns an error if the location is missing' do
+      VCR.use_cassette('mapquest_location_denver_sad_path_blank') do
+        get "/api/v1/forecast", 
+        headers: {'CONTENT_TYPE' => 'application/json', 'ACCEPT' => 'application/json'}
+  
+        expect(response.status).to eq(400)
+      end
+    end
+
+    it 'returns no content status if the location is jibberish' do
+      VCR.use_cassette('mapquest_location_denver_sad_path_jibberish') do
+        get "/api/v1/forecast?location=klsdgjhldfjgl", 
+        headers: {'CONTENT_TYPE' => 'application/json', 'ACCEPT' => 'application/json'}
+
+        expect(response.status).to eq(204)
+      end
+    end
+
+    it 'returns no content status if the location is jibberish+nubmers' do
+      VCR.use_cassette('mapquest_location_denver_sad_path_jibberish_numbers') do
+        get "/api/v1/forecast?location=klsdgjhldfjgl24645", 
+        headers: {'CONTENT_TYPE' => 'application/json', 'ACCEPT' => 'application/json'}
+
+        expect(response.status).to eq(204)
+      end
+    end
+  end
 end
