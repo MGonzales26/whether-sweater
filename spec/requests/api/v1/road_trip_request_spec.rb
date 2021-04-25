@@ -45,5 +45,57 @@ RSpec.describe 'road trip requests' do
         expect(road_trip[:data][:attributes][:weather_at_eta][:conditions]).to be_a(String)
       end
     end
+
+    it 'functions normally if the api key is present and correct' do
+      VCR.use_cassette('road_trip_call') do
+        user = create(:user, email: 'test@example.com', password: 'password', password_confirmation: 'password')
+
+        post_body = {
+          origin: "Denver,CO",
+          destination: "Pueblo,CO",
+          api_key: user.api_key
+        }
+        post '/api/v1/road_trip', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json'},
+        params: JSON.generate(post_body)
+
+        expect(response).to be_successful
+
+        road_trip = JSON.parse(response.body, symbolize_names: true)
+        # require 'pry'; binding.pry
+      end
+    end
+  end
+
+  describe 'sad path' do
+    it 'returns a 401 error if the api key is missing' do
+      VCR.use_cassette('road_trip_call_no_api') do
+        user = create(:user, email: 'test@example.com', password: 'password', password_confirmation: 'password')
+
+        post_body = {
+          origin: "Denver,CO",
+          destination: "Pueblo,CO"
+        }
+        post '/api/v1/road_trip', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json'},
+        params: JSON.generate(post_body)
+
+        expect(response.status).to eq(401)
+      end
+    end
+
+    it 'returns a 401 error if the api key is invalid' do
+      VCR.use_cassette('road_trip_call_no_api') do
+        user = create(:user, email: 'test@example.com', password: 'password', password_confirmation: 'password')
+
+        post_body = {
+          origin: "Denver,CO",
+          destination: "Pueblo,CO",
+          api_key: "LK2dfg54341hdgfp35jkgdf"
+        }
+        post '/api/v1/road_trip', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json'},
+        params: JSON.generate(post_body)
+
+        expect(response.status).to eq(401)
+      end
+    end
   end
 end
