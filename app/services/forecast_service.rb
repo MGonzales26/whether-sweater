@@ -4,6 +4,8 @@ class ForecastService
     forecast = conn.get("/data/2.5/onecall") do |f|
       f.params[:lat] = coords[:lat] 
       f.params[:lon] = coords[:lng]
+      f.params[:units] = "imperial"
+      f.params[:exclude] = "minutely"
     end
     
     JSON.parse(forecast.body, symbolize_names: true)
