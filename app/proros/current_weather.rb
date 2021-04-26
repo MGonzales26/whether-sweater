@@ -1,4 +1,4 @@
-class CurrentWeather
+class CurrentWeather < Forecast
   include Formatter
   
   attr_reader :datetime,
@@ -21,7 +21,7 @@ class CurrentWeather
     @humidity = data[:humidity]
     @uvi = data[:uvi]
     @visibility = data[:visibility]   
-    @conditions = data[:weather].first[:description]
-    @icon = data[:weather].first[:icon]
+    @conditions = get_conditions(data)
+    @icon = get_icon(data)
   end
 end

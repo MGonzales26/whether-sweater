@@ -31,4 +31,12 @@ class Forecast
       HourlyWeather.new(hour, @timezone_offset)
     end
   end
+
+  def get_conditions(data)
+    data[:weather].first[:description]
+  end
+
+  def get_icon(data)
+    data[:weather].first[:icon]
+  end
 end
