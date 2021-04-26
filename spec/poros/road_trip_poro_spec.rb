@@ -6,7 +6,7 @@ RSpec.describe 'road trip poro' do
       from = "Denver,CO"
       to = "Pueblo,CO"
       trip = RoadTripService.get_road_trip(from, to)
-      destination_lat_lon = road_trip[:route][:locations][1][:displayLatLng]
+      destination_lat_lon = trip[:route][:locations][1][:displayLatLng]
       weather = ForecastService.find_forecast(destination_lat_lon)
       road_trip = RoadTrip.new(trip, weather)
 
