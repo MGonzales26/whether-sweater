@@ -23,7 +23,7 @@ class Salary
     salaries = salaries[:salaries]
     tech_salaries = []
     tech_jobs.each do |job|
-      salaries.each do |salary|
+      salaries&.each do |salary|
         tech_salaries << salary_info(salary) if job == salary[:job][:id]
       end
     end

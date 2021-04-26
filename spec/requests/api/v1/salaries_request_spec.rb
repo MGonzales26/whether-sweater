@@ -57,5 +57,13 @@ RSpec.describe 'salaries request' do
         expect(response.status).to eq(400)
       end
     end
+
+    it 'returns an 204 no content error if the destination is jibberish' do
+      VCR.use_cassette('sararies_sad_jibberish') do
+        get '/api/v1/salaries?destination=osdijgfsdgj'
+        
+        expect(response.status).to eq(404)
+      end
+    end
   end
 end
