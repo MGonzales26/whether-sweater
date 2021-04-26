@@ -33,7 +33,7 @@ class RoadTrip
   end
 
   def find_weather_at_eta(weather)
-    total_travel_hours = @split_travel_time[0] + (1 if @split_travel_time[1] > 00)
+    total_travel_hours = @split_travel_time[0]
     arrival_weather = weather[:hourly][total_travel_hours - 1]
     { 
       temperature: arrival_weather[:temp],

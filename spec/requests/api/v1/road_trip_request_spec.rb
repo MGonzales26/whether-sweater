@@ -61,7 +61,6 @@ RSpec.describe 'road trip requests' do
         expect(response).to be_successful
 
         road_trip = JSON.parse(response.body, symbolize_names: true)
-        # require 'pry'; binding.pry
       end
     end
   end
