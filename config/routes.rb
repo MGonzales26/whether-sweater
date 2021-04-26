@@ -7,6 +7,7 @@ Rails.application.routes.draw do
       resource :users, only: [:create]
       resource :sessions, only: [:create]
       post '/road_trip', to: 'road_trip#create'
+      get '/salaries', to: 'salaries#index'
     end
   end
 end
