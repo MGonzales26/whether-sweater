@@ -17,6 +17,7 @@ RSpec.describe 'forecast service' do
           expect(result[:hourly]).to be_an(Array)
           expect(result).to have_key(:daily)
           expect(result[:daily]).to be_an(Array)
+          expect(result).to_not have_key(:minutely)
         end
       end
     end
