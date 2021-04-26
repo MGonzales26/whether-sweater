@@ -1,4 +1,4 @@
-class DailyWeather
+class DailyWeather < Forecast
   include Formatter
 
   attr_reader :date,
@@ -15,7 +15,7 @@ class DailyWeather
     @sunset = local_time(data[:sunset], timezone_offset)
     @min_temp = data[:temp][:min]
     @max_temp = data[:temp][:max]
-    @conditions = data[:weather].first[:description]
-    @icon = data[:weather].first[:icon]
+    @conditions = get_conditions(data)
+    @icon = get_icon(data)
   end
 end
