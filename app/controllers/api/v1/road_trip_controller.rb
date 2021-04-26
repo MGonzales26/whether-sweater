@@ -3,7 +3,11 @@ class Api::V1::RoadTripController < ApplicationController
 
   def create
     road_trip = RoadTripFacade.find_road_trip(trip_params[:origin], trip_params[:destination])
-    render json: RoadTripSerializer.new(road_trip)
+    if road_trip == "ERROR"
+      render json: ImpossibleTripSerializer.impossible_trip(trip_params[:origin], trip_params[:destination])
+    else
+      render json: RoadTripSerializer.new(road_trip)
+    end
   end
   private
 

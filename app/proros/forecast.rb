@@ -1,5 +1,4 @@
 class Forecast
-  include Formatter
 
   attr_reader :timezone_offset,
               :current_weather,
