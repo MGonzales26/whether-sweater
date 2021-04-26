@@ -7,6 +7,6 @@ class Api::V1::SalariesController < ApplicationController
     salaries = conn.get("/api/urban_areas/slug:#{params[:destination]}/salaries")
     parsed_salaries = JSON.parse(salaries.body, symbolize_names: true)
     # require 'pry'; binding.pry
-    city_data = Salary.new(forecast, parsed_salaries)
+    city_data = Salary.new(forecast, parsed_salaries, params[:destination])
   end
 end
