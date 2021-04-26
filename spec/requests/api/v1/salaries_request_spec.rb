@@ -47,4 +47,15 @@ RSpec.describe 'salaries request' do
       end
     end
   end
+
+
+  describe 'sad path' do
+    it 'returns an error if the destination is missing' do
+      VCR.use_cassette('sararies_request_sad_no_loc') do
+        get '/api/v1/salaries'
+
+        expect(response.status).to eq(400)
+      end
+    end
+  end
 end
