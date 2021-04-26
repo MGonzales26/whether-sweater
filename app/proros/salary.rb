@@ -1,16 +1,20 @@
 class Salary
+  include ActionView::Helpers::NumberHelper
+
+  attr_reader :destination,
+              :forecast,
+              :salaries
 
   def initialize(forecast, salaries, location)
     @destination = location
     @forecast = get_weather(forecast)
-    # require 'pry'; binding.pry
     @salaries = get_salaries(salaries)
   end
 
   def get_weather(forecast)
     {
       summary: forecast[:current][:weather].first[:description],
-      temperature: "#{forecast[:current][:temp]} F"
+      temperature: "#{forecast[:current][:temp].to_i} F"
     }
   end
 
@@ -20,18 +24,17 @@ class Salary
     tech_salaries = []
     tech_jobs.each do |job|
       salaries.each do |salary|
-        # require 'pry'; binding.pry
-        tech_salaries << salary_info(salary)
+        tech_salaries << salary_info(salary) if job == salary[:job][:id]
       end
     end
+    tech_salaries
   end
 
   def salary_info(salary)
     {
       title: salary[:job][:title],
-      min: "$#{salary[:salary_percentiles][:percentile_25].count}",
-      max: "$#{salary[:salary_percentiles][:percentile_75].count}"
+      min: number_to_currency(salary[:salary_percentiles][:percentile_25].round(2)),
+      max: number_to_currency(salary[:salary_percentiles][:percentile_75].round(2))
     }
-    require 'pry'; binding.pry
   end
 end

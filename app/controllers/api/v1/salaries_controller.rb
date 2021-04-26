@@ -6,7 +6,8 @@ class Api::V1::SalariesController < ApplicationController
     conn = Faraday.new('https://api.teleport.org')
     salaries = conn.get("/api/urban_areas/slug:#{params[:destination]}/salaries")
     parsed_salaries = JSON.parse(salaries.body, symbolize_names: true)
-    # require 'pry'; binding.pry
     city_data = Salary.new(forecast, parsed_salaries, params[:destination])
+
+    render json: SalariesSerializer.new(city_data)
   end
 end
