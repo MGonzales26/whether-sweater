@@ -20,9 +20,18 @@ class Salary
     tech_salaries = []
     tech_jobs.each do |job|
       salaries.each do |salary|
-        require 'pry'; binding.pry
-
+        # require 'pry'; binding.pry
+        tech_salaries << salary_info(salary)
       end
     end
+  end
+
+  def salary_info(salary)
+    {
+      title: salary[:job][:title],
+      min: "$#{salary[:salary_percentiles][:percentile_25].count}",
+      max: "$#{salary[:salary_percentiles][:percentile_75].count}"
+    }
+    require 'pry'; binding.pry
   end
 end
