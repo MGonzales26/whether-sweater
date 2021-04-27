@@ -94,5 +94,31 @@ RSpec.describe 'user post endpoints' do
 
       expect(response.status).to eq(400)
     end
+
+    it 'returns a 400 error if password confirmation is empty' do  
+      user_info = {
+        email: 'whatever@example.com',
+        password: 'password',
+        password_confirmation: ''
+      }
+
+      post '/api/v1/users', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json'},
+      params: JSON.generate(user_info)
+
+      expect(response.status).to eq(400)
+    end
+
+    it 'returns a 400 error if email is not an email address' do  
+      user_info = {
+        email: 'this_is_totally_an_email_address_trust_me',
+        password: 'password',
+        password_confirmation: 'password'
+      }
+
+      post '/api/v1/users', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json'},
+      params: JSON.generate(user_info)
+
+      expect(response.status).to eq(400)
+    end
   end
 end

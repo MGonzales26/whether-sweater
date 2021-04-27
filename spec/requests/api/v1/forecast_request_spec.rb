@@ -1,12 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe 'forecast request' do
+  before(:each) do
+    @headers = { 'Content-Type' => 'application/', 'Accept' => 'application/json' }
+  end
+
   describe 'happy path' do
     it 'returns the forcast for a given city' do
       VCR.use_cassette('mapquest_location_denver') do
 
         get "/api/v1/forecast?location=denver,co", 
-        headers: {'CONTENT_TYPE' => 'application/json', 'ACCEPT' => 'application/json'}
+        headers: @headers
   
         expect(response.status).to eq(200)
   
@@ -93,7 +97,16 @@ RSpec.describe 'forecast request' do
     it 'returns an error if the location is missing' do
       VCR.use_cassette('mapquest_location_denver_sad_path_blank') do
         get "/api/v1/forecast", 
-        headers: {'CONTENT_TYPE' => 'application/json', 'ACCEPT' => 'application/json'}
+        headers: @headers
+  
+        expect(response.status).to eq(400)
+      end
+    end
+
+    it 'returns an error if the location is empty' do
+      VCR.use_cassette('mapquest_location_denver_sad_path_empty') do
+        get "/api/v1/forecast?location=", 
+        headers: @headers
   
         expect(response.status).to eq(400)
       end
@@ -102,18 +115,18 @@ RSpec.describe 'forecast request' do
     it 'returns no content status if the location is jibberish' do
       VCR.use_cassette('mapquest_location_denver_sad_path_jibberish') do
         get "/api/v1/forecast?location=klsdgjhldfjgl", 
-        headers: {'CONTENT_TYPE' => 'application/json', 'ACCEPT' => 'application/json'}
+        headers: @headers
 
-        expect(response.status).to eq(204)
+        expect(response.status).to eq(400)
       end
     end
 
     it 'returns no content status if the location is jibberish+nubmers' do
       VCR.use_cassette('mapquest_location_denver_sad_path_jibberish_numbers') do
         get "/api/v1/forecast?location=klsdgjhldfjgl24645", 
-        headers: {'CONTENT_TYPE' => 'application/json', 'ACCEPT' => 'application/json'}
+        headers:@headers
 
-        expect(response.status).to eq(204)
+        expect(response.status).to eq(400)
       end
     end
   end

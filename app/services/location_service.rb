@@ -11,7 +11,7 @@ class LocationService
   private
 
   def self.conn
-    Faraday.new("http://www.mapquestapi.com/geocoding/v1/address") do |f|
+    Faraday.new("http://www.mapquestapi.com") do |f|
       f.params[:key] = ENV['MAPQUEST_API_KEY']
     end
   end

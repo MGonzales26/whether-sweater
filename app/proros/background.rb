@@ -8,7 +8,7 @@ class Background
   def initialize(data, location)
     @source = 'unsplash.com'
     @location = location
-    @image_url = data[:links][:html]
+    @image_url = data[:urls][:regular]
     @author = data[:user][:name]
     @author_url = data[:user][:links][:html]
   end
