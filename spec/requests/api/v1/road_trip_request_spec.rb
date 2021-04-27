@@ -1,17 +1,21 @@
 require 'rails_helper'
 
 RSpec.describe 'road trip requests' do
+  before(:each) do
+    @user = create(:user, email: 'test@example.com', password: 'password', password_confirmation: 'password')
+    @headers = { 'Content-Type' => 'application/json', 'Accept' => 'application/json'}
+  end
+  
   describe 'happy path' do
     it 'returns trip origin, destination, travel time, forecast' do
       VCR.use_cassette('road_trip_call') do
-        user = create(:user, email: 'test@example.com', password: 'password', password_confirmation: 'password')
 
         post_body = {
           origin: "Denver,CO",
           destination: "Pueblo,CO",
-          api_key: user.api_key
+          api_key: @user.api_key
         }
-        post '/api/v1/road_trip', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json'},
+        post '/api/v1/road_trip', headers: @headers,
         params: JSON.generate(post_body)
 
         expect(response).to be_successful
@@ -48,14 +52,13 @@ RSpec.describe 'road trip requests' do
 
     it 'functions normally if the api key is present and correct' do
       VCR.use_cassette('road_trip_call') do
-        user = create(:user, email: 'test@example.com', password: 'password', password_confirmation: 'password')
 
         post_body = {
           origin: "Denver,CO",
           destination: "Pueblo,CO",
-          api_key: user.api_key
+          api_key: @user.api_key
         }
-        post '/api/v1/road_trip', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json'},
+        post '/api/v1/road_trip', headers: @headers,
         params: JSON.generate(post_body)
 
         expect(response).to be_successful
@@ -68,13 +71,12 @@ RSpec.describe 'road trip requests' do
   describe 'sad path' do
     it 'returns a 401 error if the api key is missing' do
       VCR.use_cassette('road_trip_call_no_api') do
-        user = create(:user, email: 'test@example.com', password: 'password', password_confirmation: 'password')
 
         post_body = {
           origin: "Denver,CO",
           destination: "Pueblo,CO"
         }
-        post '/api/v1/road_trip', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json'},
+        post '/api/v1/road_trip', headers: @headers,
         params: JSON.generate(post_body)
 
         expect(response.status).to eq(401)
@@ -83,30 +85,28 @@ RSpec.describe 'road trip requests' do
 
     it 'returns a 401 error if the api key is invalid' do
       VCR.use_cassette('road_trip_call_no_api') do
-        user = create(:user, email: 'test@example.com', password: 'password', password_confirmation: 'password')
 
         post_body = {
           origin: "Denver,CO",
           destination: "Pueblo,CO",
           api_key: "LK2dfg54341hdgfp35jkgdf"
         }
-        post '/api/v1/road_trip', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json'},
+        post '/api/v1/road_trip', headers: @headers,
         params: JSON.generate(post_body)
 
         expect(response.status).to eq(401)
       end
     end
 
-    it 'returns a 400 error if the destination is missing' do
+    it 'returns a 400 error if the destination is empty' do
       VCR.use_cassette('missing_destination') do
-        user = create(:user, email: 'test@example.com', password: 'password', password_confirmation: 'password')
 
         post_body = {
           origin: "Denver,CO",
           destination: "",
-          api_key: user.api_key
+          api_key: @user.api_key
         }
-        post '/api/v1/road_trip', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json'},
+        post '/api/v1/road_trip', headers: @headers,
         params: JSON.generate(post_body)
 
         expect(response.status).to eq(400)
@@ -115,29 +115,56 @@ RSpec.describe 'road trip requests' do
 
     it 'returns a 400 error if the destination is missing' do
       VCR.use_cassette('missing_destination_field') do
-        user = create(:user, email: 'test@example.com', password: 'password', password_confirmation: 'password')
 
         post_body = {
           origin: "Denver,CO",
-          api_key: user.api_key
+          api_key: @user.api_key
         }
-        post '/api/v1/road_trip', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json'},
+        post '/api/v1/road_trip', headers: @headers,
+        params: JSON.generate(post_body)
+        
+        expect(response.status).to eq(400)
+      end
+    end
+    
+    it 'returns a 400 error if the origin is empty' do
+      VCR.use_cassette('empty_origin') do
+
+        post_body = {
+          origin: "",
+          destination: "Denver,CO",
+          api_key: @user.api_key
+        }
+        post '/api/v1/road_trip', headers: @headers,
+        params: JSON.generate(post_body)
+
+        expect(response.status).to eq(400)
+      end
+    end
+
+    it 'returns a 400 error if the origin is missing' do
+      VCR.use_cassette('missing_origin_field') do
+
+        post_body = {
+          destination: "Denver,CO",
+          api_key: @user.api_key
+        }
+        post '/api/v1/road_trip', headers: @headers,
         params: JSON.generate(post_body)
         
         expect(response.status).to eq(400)
       end
     end
 
-    it 'returns an empty weather hash and impossible travel time if cities drivable' do
+    it 'returns an empty weather hash and impossible travel time if route undrivable' do
       VCR.use_cassette('LA_to_London') do
-        user = create(:user, email: 'test@example.com', password: 'password', password_confirmation: 'password')
 
         post_body = {
           origin: "Las Angeles,CA",
           destination: "London,UK",
-          api_key: user.api_key
+          api_key: @user.api_key
         }
-        post '/api/v1/road_trip', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json'},
+        post '/api/v1/road_trip', headers: @headers,
         params: JSON.generate(post_body)
 
         expect(response).to be_successful

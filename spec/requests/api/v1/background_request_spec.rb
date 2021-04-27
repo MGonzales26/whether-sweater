@@ -1,12 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe 'background request' do
+  before(:each) do
+    @headers = { 'Content-Type' => 'application/', 'Accept' => 'application/json '}
+  end
   describe 'happy path' do
     it 'returns an image for the given city' do
       VCR.use_cassette('background_image_denver') do
 
         get "/api/v1/backgrounds?location=denver,co",
-        headers: { 'CONTENT_TYPE' => 'application/json', 'ACCEPT' => 'application/json' }
+        headers: @headers
   
         expect(response.status).to eq(200)
   
@@ -39,6 +42,42 @@ RSpec.describe 'background request' do
         expect(result[:data][:attributes][:image][:credit][:author]).to be_a(String)
         expect(result[:data][:attributes][:image][:credit]).to have_key(:authorUrl)
         expect(result[:data][:attributes][:image][:credit][:authorUrl]).to be_a(String)
+      end
+    end
+  end
+
+  describe 'sad path' do
+    it 'returns a 400 error if the location is empty' do
+      get "/api/v1/backgrounds?location=",
+      headers: @headers
+
+      expect(response.status).to eq(400)
+    end
+
+    it 'returns a 400 error if the location is jibberish' do
+      VCR.use_cassette('jibberish_background') do
+        get "/api/v1/backgrounds?location=sdflskhg",
+        headers: @headers
+  
+        expect(response.status).to eq(400)
+      end
+    end
+
+    it 'returns a 400 error if the location is numbers' do
+      VCR.use_cassette('number_background') do
+        get "/api/v1/backgrounds?location=654632168",
+        headers: @headers
+  
+        expect(response.status).to eq(400)
+      end
+    end
+
+    it 'returns a 400 error if the location is missing' do
+      VCR.use_cassette('missing_background') do
+        get "/api/v1/backgrounds",
+        headers: @headers
+  
+        expect(response.status).to eq(400)
       end
     end
   end

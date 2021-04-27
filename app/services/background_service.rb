@@ -2,7 +2,7 @@ class BackgroundService
   
   def self.get_background_image(location)
     result = conn.get('/search/photos') do |f|
-      f.params['query'] = "#{location} landmark"
+      f.params['query'] = "#{location}"
     end
     
     data = JSON.parse(result.body, symbolize_names: true)

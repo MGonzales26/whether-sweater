@@ -1,16 +1,20 @@
 require 'rails_helper'
 
 RSpec.describe 'session creation' do
+  before(:each) do
+    @user = create(:user, email: 'test@example.com', password: 'password', password_confirmation: 'password')
+    @headers = { 'Content-Type' => 'application/json', 'Accept' => 'application/json' }
+  end
+
   describe 'happy path' do
     it 'creates a session' do
-      user = create(:user, email: 'test@example.com', password: 'password', password_confirmation: 'password')
 
       login_credentials = {
-        email: user.email,
-        password: user.password
+        email: @user.email,
+        password: @user.password
       }
 
-      post '/api/v1/sessions', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json' },
+      post '/api/v1/sessions', headers: @headers,
       params: JSON.generate(login_credentials)
 
       expect(response.status).to eq(200)
@@ -35,16 +39,13 @@ RSpec.describe 'session creation' do
   end
 
   describe 'sad path' do 
-    before(:each) do
-      @user = create(:user, email: 'test@example.com', password: 'password', password_confirmation: 'password')
-    end
     it 'returns a 400 error if password does not pass authentication' do  
       login_credentials = {
         email: 'test@example.com',
         password: 'word'
       }
 
-      post '/api/v1/sessions', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json'},
+      post '/api/v1/sessions', headers: @headers,
       params: JSON.generate(login_credentials)
 
       expect(response.status).to eq(400)
@@ -56,7 +57,7 @@ RSpec.describe 'session creation' do
         password: 'password'
       }
 
-      post '/api/v1/sessions', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json'},
+      post '/api/v1/sessions', headers: @headers,
       params: JSON.generate(login_credentials)
 
       expect(response.status).to eq(400)
@@ -68,7 +69,19 @@ RSpec.describe 'session creation' do
         password: ''
       }
 
-      post '/api/v1/sessions', headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json'},
+      post '/api/v1/sessions', headers: @headers,
+      params: JSON.generate(login_credentials)
+
+      expect(response.status).to eq(400)
+    end
+
+    it 'returns a 400 error if email does not match a user' do
+      login_credentials = {
+        email: 'not_my_email@example.com',
+        password: 'password'
+      }
+
+      post '/api/v1/sessions', headers: @headers,
       params: JSON.generate(login_credentials)
 
       expect(response.status).to eq(400)

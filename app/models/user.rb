@@ -1,7 +1,10 @@
 class User < ApplicationRecord
   include ApiKey
   
-  validates :email, presence: true, uniqueness: true
+  validates :email, 
+            presence: true,
+            uniqueness: true,
+            format: { with: URI::MailTo::EMAIL_REGEXP } 
   validates_presence_of :password
   validates_presence_of :password_confirmation
   validates_presence_of :api_key
