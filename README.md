@@ -1,6 +1,6 @@
 # Whether Sweater
 
-Wheter Sweater was completed in 5 days in the Backend Program at the Turing School of Software and Design. This project is an API based application for making Road Trips with weather information at your destination for the time you will arrive. These endpoints are ready to be utilized by a frontend team, including current weather, a weather forecast and the time needed to travel to your destination.
+Whether Sweater was completed in 5 days in the Backend Program at the Turing School of Software and Design. This project is an API based application for making Road Trips with weather information at your destination for the time you will arrive. These endpoints are ready to be utilized by a frontend team, including current weather, a weather forecast and the time needed to travel to your destination.
 
 ## Table of Contents
 - [Learning Goals](#learning-goals)
